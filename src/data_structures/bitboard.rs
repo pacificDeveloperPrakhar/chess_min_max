@@ -18,7 +18,8 @@ pub enum PieceColor
     W=0,
     B=1
 }
-
+// implementing the From trait for the piece enum which has a function called from takes an input of one data type and then return
+// the data type for what we have specified for 
 impl From<char> for Piece{
     fn from(c:char)->Self
     {
@@ -33,3 +34,16 @@ impl From<char> for Piece{
      }
     }
 } 
+
+impl From<char> for PieceColor
+{
+ fn from(c:char)->Self
+ {
+    match c
+    {
+        'W'|'w'=>PieceColor::W,
+        'B'|'b'=>PieceColor::B,
+        _=>PieceColor::W
+    }
+ }
+}
