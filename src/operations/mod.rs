@@ -4,7 +4,6 @@ use crate::data_structures::bitboard::Piece;
 pub fn init_board(epd:&String)->[[u64;7];2]
 {
   let mut rank:u8=0;
-  let mut count:u8=7;
   let mut step=0;
   let epd_split:Vec<&str>=epd.split(" ").collect();
   let board:&str=epd_split[0];
@@ -15,7 +14,6 @@ pub fn init_board(epd:&String)->[[u64;7];2]
   {
    if c=='/'
    {
-    count=7;
     rank+=1;
     continue;
    }
@@ -29,8 +27,8 @@ pub fn init_board(epd:&String)->[[u64;7];2]
     continue;
    }
    
-   println!("{} ={}",c,(count-((step%8) as u8))+rank*8);
-   let piece_position:u64 = 1 << ((count-((step%8) as u8))+rank*8);
+   println!("{} ={}",c,(7-((step%8) as u8))+rank*8);
+   let piece_position:u64 = 1 << ((7-((step%8) as u8))+rank*8);
    let side = if (c as u8) < 91 { 'b' } else { 'w' };
 
    
