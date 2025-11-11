@@ -1,3 +1,4 @@
+pub mod moves_generate_pieces;
 use std::vec::Vec;
 use crate::data_structures::bitboard::PieceColor;
 use crate::data_structures::bitboard::Piece;
@@ -27,7 +28,6 @@ pub fn init_board(epd:&String)->[[u64;7];2]
     continue;
    }
    
-   println!("{} ={}",c,(7-((step%8) as u8))+rank*8);
    let piece_position:u64 = 1 << ((7-((step%8) as u8))+rank*8);
    let side = if (c as u8) < 91 { 'b' } else { 'w' };
 
@@ -35,31 +35,41 @@ pub fn init_board(epd:&String)->[[u64;7];2]
    bitboards[PieceColor::from(side) as usize][Piece::from(c) as usize]|=piece_position;
    step+=1;
   }
+
+//   now calculate the white side bitboard 
+  for i in 0..6
+  {
+    bitboards[PieceColor::from('w') as usize][6]|=bitboards[PieceColor::from('w') as usize][i];
+    bitboards[PieceColor::from('b') as usize][6]|=bitboards[PieceColor::from('b') as usize][i];
+  }
   return bitboards;
 }
 
 
 //function to display the bitboard
-pub fn display_bitboard(board:u64)->String
-{
-    let mut temp=board;
-    let mut result=String::new();
-    for rank in 0..8
-    {
-        for file in 0..8
-        {
-            if (temp&1)==1
-            {
-                result=String::from("1 ")+&result;
-            }
-            else
-            {
-                result=String::from("0 ")+&result; // calls method of the string newly created and then add it to it
-            }
-            temp=temp>>1;
-        }
-        result=String::from("\n")+&result;
-    }
-    println!("{}",result);
-    return result;
+// function to display the bitboard (reversed order)
+pub fn display_bitboard(board: u64) -> String {
+  let mut temp = board;
+  let mut result = String::new();
+
+  for _rank in 0..8 {
+      let mut line = String::new();
+
+      for _file in 0..8 {
+          if (temp & 1) == 1 {
+              line = String::from("1 ") + &line;
+          } else {
+              line = String::from("0 ") + &line;
+          }
+          temp >>= 1;
+      }
+
+      // append the constructed rank at the end of result
+      result.push_str(&line);
+      result.push('\n');
+
+      println!("here is the thing {}", result);
+  }
+
+  result
 }
