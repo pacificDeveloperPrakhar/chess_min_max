@@ -12,166 +12,25 @@ pub fn is_king_checked(bitboards: [[u64; 7]; 2], side: char) -> u64 {
     let mut l_shape_attackings: u64 = 0;
     let mut horizontal_vertical_attackings: u64 = 0;
     let mut pawn_attackings: u64 = 0;
-
+    
     // calculate the enemy side bitboard
     let enemy_side: usize = 1 - (PieceColor::from(side) as usize);
+    //calculate all the enemies pieces
+    let all_enemies = bitboards[enemy_side][Piece::A as usize];
     println!("enemy side {}",enemy_side);
     println!("my side {}",side);
-    let all_enemies = bitboards[enemy_side][Piece::A as usize];
     // now proceed with the square calculation
-    let l_squares: [[u64; 2]; 2] = [[2, 1], [2, 1]];
-
-    // calculating for the knight attacking position
-    for i in 0..2 {
-        for j in 0..2 {
-            let rank_to_add = l_squares[0][i];
-            let file_to_add = l_squares[1][j];
-
-            // now reverse the squares among the rank and file
-            let another_rank_to_add = l_squares[1][i];
-            let another_file_to_add = l_squares[0][j];
-
-            // now add the calculated squares to the attacking position info containing number
-            let pos1 = (1 << (rank * 8 + file)) >> (rank_to_add * 8) << file_to_add;
-            let pos2 = (1 << (rank * 8 + file)) << (another_rank_to_add * 8) >> another_file_to_add;
-
-            if pos1 & all_enemies != 0 {
-                l_shape_attackings |= pos1;
-            }
-            if pos2 & all_enemies != 0 {
-                l_shape_attackings |= pos2;
-            }
-        }
-    }
-
+    l_shape_attackings=l_squares(bitboards,rank,file)& all_enemies;
     // now will be calculating for the horizontal and vertical attacking positions
-    {
-        let enemy_side: usize = 1 - (PieceColor::from(side) as usize);
-        let all_enemies = bitboards[enemy_side][Piece::A as usize];
-        let mut step = 0;
-
-        // in right direction
-        while step + file < 8 {
-            horizontal_vertical_attackings |= (king_position >> step) & all_enemies;
-            if horizontal_vertical_attackings != 0 {
-                break;
-            }
-            step += 1;
-        }
-
-        step = 0;
-        // now in the left direction
-        while file >= step {
-            let pos1 = (king_position << step) & all_enemies;
-            if pos1 != 0 {
-                horizontal_vertical_attackings |= pos1;
-                break;
-            }
-            step += 1;
-            if step > file {
-                break;
-            }
-        }
-
-        // now in the vertical direction
-        step = 0;
-        while step + rank < 8 {
-            let pos = (king_position << (step * 8)) & all_enemies;
-            if pos != 0 {
-                horizontal_vertical_attackings |= pos;
-                break;
-            }
-            step += 1;
-        }
-
-        // now for the vertical downward direction
-        step = 0;
-        while rank >= step {
-            let pos = (king_position >> (step * 8)) & all_enemies;
-            if pos != 0 {
-                horizontal_vertical_attackings |= pos;
-                break;
-            }
-            step += 1;
-            if step > rank {
-                break;
-            }
-        }
-    }
-
+    horizontal_vertical_attackings = horizontal_vertical_moves(bitboards,rank,file) &all_enemies;
     // now for all the diagonal attacking sides
-    {
-        let mut step_row = 0;
-        let mut step_col = 0;
-
-        // upper right
-        while (step_row + rank < 8) && (file + step_col < 8) {
-            let pos = ((king_position << (step_row * 8)) >> step_col) & all_enemies;
-            if pos != 0 {
-                diagnol_attackings |= pos;
-                break;
-            }
-            step_col += 1;
-            step_row += 1;
-        }
-
-        step_col = 0;
-        step_row = 0;
-
-        // upper left
-        while (file >= step_col) && (step_row + rank < 8) {
-            let pos = ((king_position << (step_row * 8)) << step_col) & all_enemies;
-            if pos != 0 {
-                diagnol_attackings |= pos;
-                break;
-            }
-            step_col += 1;
-            step_row += 1;
-            if step_col > file {
-                break;
-            }
-        }
-
-        step_col = 0;
-        step_row = 0;
-
-        // bottom right
-        while (8 > step_col+file) && ( step_row>=0) {
-            let pos=((king_position >> (step_row * 8)) >> step_col);
-            let pos_with = ((king_position >> (step_row * 8)) >> step_col) & all_enemies;
-            if pos_with != 0 {
-                diagnol_attackings |= pos_with;
-                break;
-    
-            }
-            step_col += 1;
-            step_row += 1;
-        }
-
-        step_col = 0;
-        step_row = 0;
-
-        // bottom left
-        while (file + step_col < 8) && (rank >= step_row) {
-            let pos = ((king_position >> (step_row * 8)) << step_col) & all_enemies;
-            if pos != 0 {
-                diagnol_attackings |= pos;
-                break;
-            }
-            step_col += 1;
-            step_row += 1;
-        }
-    }
-
+    diagnol_attackings=diagnol_moves(bitboards,rank,file)&all_enemies;
     // pawn attackings
-    {
-        let pos1 = king_position << 8 << 1;
-        let pos2 = king_position << 8 << 1;
-        let res = (pos1 | pos2) & all_enemies;
-        if res != 0 {
-            pawn_attackings |= res;
-        }
-    }
+    pawn_attackings=pawn_moves(bitboards,rank,file)&all_enemies;
+    let board=display_bitboard(pawn_attackings);
+    println!("{}",board);
+    //king attacking
+    let king_attackings=one_square_move(bitboards,rank,file)&all_enemies& bitboards[enemy_side as usize][Piece::K as usize];
     let mut result=0;
     if pawn_attackings &bitboards[enemy_side][Piece::P as usize]!=0
     {
@@ -190,10 +49,10 @@ pub fn is_king_checked(bitboards: [[u64; 7]; 2], side: char) -> u64 {
     {
         result|=(diagnol_attackings&(bitboards[enemy_side][Piece::Q as usize]|bitboards[enemy_side][Piece::B as usize]));
     }
-    return result;
+    return result|pawn_attackings|king_attackings;
 }
 // converting the move from bitboard to file and rank
-pub fn resolve_move(num:u64)->(u8,u8)
+pub fn resolve_move(num:u64)->(usize,usize)
 {
     let sqaures:u8=(63-num.leading_zeros()) as u8;
     
@@ -202,7 +61,7 @@ pub fn resolve_move(num:u64)->(u8,u8)
       let x=i*8;
       if (sqaures-x)<8
       {
-        return (i,sqaures-x);
+        return (i as usize,(sqaures-x) as usize);
       }
     }
     return (0,0);
@@ -454,8 +313,8 @@ pub fn one_square_move(bitboards:[[u64;7];2],rank:usize,file:usize)->u64
 pub fn pawn_moves(bitboards:[[u64;7];2],rank:usize,file:usize)->u64
 {
     let position=1<<((rank*8) as u64 +file as u64);
-    let white_pieces=bitboards[PieceColor::W as usize][Piece::P as usize];
-    let black_pieces=bitboards[PieceColor::B as usize][Piece::P as usize];
+    let white_pieces=bitboards[PieceColor::W as usize][Piece::A as usize];
+    let black_pieces=bitboards[PieceColor::B as usize][Piece::A as usize];
 
     let white_start:u64=65280;
     let black_start:u64=71776119061217280;

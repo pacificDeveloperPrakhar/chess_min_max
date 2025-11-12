@@ -72,3 +72,9 @@ pub fn display_bitboard(board: u64) -> String {
 
   result
 }
+
+
+pub fn generate_moves(bitboards:[[u64;7];2],rank:usize,file:usize)->(u64,u64)
+{
+ return (0,0);
+}
