@@ -28,7 +28,7 @@ pub fn init_board(epd:&String)->[[u64;7];2]
     continue;
    }
    
-   let piece_position:u64 = 1 << ((7-((step%8) as u8))+rank*8);
+   let piece_position:u64 = 1 << step;
    let side = if (c as u8) < 91 { 'b' } else { 'w' };
 
    
@@ -65,10 +65,9 @@ pub fn display_bitboard(board: u64) -> String {
       }
 
       // append the constructed rank at the end of result
-      result.push_str(&line);
-      result.push('\n');
+      result=line + &result;
+      result=String::from("\n")+&result;
 
-      println!("here is the thing {}", result);
   }
 
   result
