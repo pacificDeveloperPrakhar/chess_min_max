@@ -17,8 +17,7 @@ pub fn is_king_checked(bitboards: [[u64; 7]; 2], side: char) -> u64 {
     let enemy_side: usize = 1 - (PieceColor::from(side) as usize);
     //calculate all the enemies pieces
     let all_enemies = bitboards[enemy_side][Piece::A as usize];
-    println!("enemy side {}",enemy_side);
-    println!("my side {}",side);
+
     // now proceed with the square calculation
     l_shape_attackings=l_squares(bitboards,rank,file)& all_enemies;
     // now will be calculating for the horizontal and vertical attacking positions
@@ -28,7 +27,7 @@ pub fn is_king_checked(bitboards: [[u64; 7]; 2], side: char) -> u64 {
     // pawn attackings
     pawn_attackings=pawn_moves(bitboards,rank,file)&all_enemies;
     let board=display_bitboard(pawn_attackings);
-    println!("{}",board);
+
     //king attacking
     let king_attackings=one_square_move(bitboards,rank,file)&all_enemies& bitboards[enemy_side as usize][Piece::K as usize];
     let mut result=0;
@@ -81,7 +80,6 @@ pub fn diagnol_moves(bitboards:[[u64;7];2],rank:usize,file:usize)->u64
 
     // upper right
     while ((step_row + rank) < 8) && (step_col <= file) {
-        print!("step_col {}",step_col+rank);
         let pos =((position << (step_row * 8)) >> step_col);
         let pos_with = ((position << (step_row * 8)) >> step_col) & all_piece;
         if pos_with != 0 {
@@ -222,7 +220,7 @@ pub fn l_squares(bitboards:[[u64;7];2],rank:usize,file:usize)->u64
     
 
     let board=display_bitboard(position);
-    println!("{}",board);
+
     // calculating for the knight attacking position
     if (rank+2)<8 && file >=1 
     {

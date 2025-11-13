@@ -5,10 +5,11 @@ use crate::operations::*;
 // now first i will be generating for the queen
 pub fn diagnol_move_generation_with_king_safety(mut bitboards: [[u64;7];2],rank:usize,file:usize)->u64
 {
-    let mut all_piece=bitboards[PieceColor::B as usize][Piece::A as usize]|bitboards[PieceColor::B as usize][Piece::A as usize];
+    let mut all_piece=(bitboards[PieceColor::B as usize][Piece::A as usize]|bitboards[PieceColor::W as usize][Piece::A as usize]);
     let position:u64=1<<((rank*8) as u64 +file as u64);
     let mut diagnol_attackings:u64=0;
-    all_piece=all_piece ^ position;
+    println!("pppppppp{}",display_bitboard(all_piece));
+    all_piece=all_piece&(all_piece ^ position);
    let side= if (bitboards[PieceColor::W as usize][Piece::A as usize]&position)!=0{0}else{1};
     // now for all the diagonal attacking sides
     {
@@ -17,16 +18,16 @@ pub fn diagnol_move_generation_with_king_safety(mut bitboards: [[u64;7];2],rank:
    
        // upper right
        while ((step_row + rank) < 8) && (step_col <= file) {
-           print!("step_col {}",step_col+rank);
            let pos =((position << (step_row * 8)) >> step_col);
            let pos_with = ((position << (step_row * 8)) >> step_col) & all_piece;
            if pos_with != 0 {
-            if is_king_safe(bitboards,position,pos_with,side)
-            {
-                diagnol_attackings|=pos;
+               if is_king_safe(bitboards,position,pos_with,side)
+               {
+                   diagnol_attackings|=pos_with;
+                }
+                break;
             }
-               break;
-           }
+            
            if is_king_safe(bitboards,position,pos,side)
            {
                diagnol_attackings|=pos;
@@ -42,10 +43,11 @@ pub fn diagnol_move_generation_with_king_safety(mut bitboards: [[u64;7];2],rank:
        while (step_col+file<8) && (step_row + rank < 8) {
            let pos = ((position << (step_row * 8)) << step_col);
            let pos_with = ((position << (step_row * 8)) << step_col) & all_piece;
+           println!("{}",display_bitboard(pos));
            if pos_with != 0 {
             if is_king_safe(bitboards,position,pos_with,side)
             {
-                diagnol_attackings|=pos;
+                diagnol_attackings|=pos_with;
             }
                break;
            }
@@ -67,7 +69,7 @@ pub fn diagnol_move_generation_with_king_safety(mut bitboards: [[u64;7];2],rank:
            if pos_with != 0 {
             if is_king_safe(bitboards,position,pos_with,side)
             {
-                diagnol_attackings|=pos;
+                diagnol_attackings|=pos_with;
             }
                break;
            }
@@ -89,7 +91,7 @@ pub fn diagnol_move_generation_with_king_safety(mut bitboards: [[u64;7];2],rank:
            if pos_with != 0 {
             if is_king_safe(bitboards,position,pos_with,side)
             {
-                diagnol_attackings|=pos;
+                diagnol_attackings|=pos_with;
             }
                break;
            }
@@ -205,15 +207,13 @@ pub fn piece_wise_l_squares(mut bitboards: [[u64; 7]; 2], rank: usize, file: usi
     let l_squares: [[u64; 2]; 2] = [[2, 1], [2, 1]];
     let side= if (bitboards[PieceColor::W as usize][Piece::A as usize]&position)!=0{0}else{1};
 
-    let board = display_bitboard(position);
-    println!("{}", board);
 
     // calculating for the knight attacking positions
 
     // (rank + 2, file - 1)
     if (rank + 2) < 8 && file >= 1 {
-        if is_king_safe(bitboards, position, (position << 2 * 8 >> 1),side) {
-            l_shape_attackings |= (position << 2 * 8 >> 1);
+        if is_king_safe(bitboards, position, (position << (2 * 8) >> 1),side) {
+            l_shape_attackings |= (position << (2 * 8) >> 1);
         }
     }
 
@@ -254,6 +254,9 @@ pub fn piece_wise_l_squares(mut bitboards: [[u64; 7]; 2], rank: usize, file: usi
 
     // (rank + 1, file - 2)
     if (rank + 1) < 8 && file >= 2 {
+        println!("{}","execute move");
+        let board=display_bitboard((position << 1 * 8 >> 2));
+        println!("{}",board);
         if is_king_safe(bitboards, position, (position << 1 * 8 >> 2),side) {
             l_shape_attackings |= (position << 1 * 8 >> 2);
         }
@@ -261,11 +264,12 @@ pub fn piece_wise_l_squares(mut bitboards: [[u64; 7]; 2], rank: usize, file: usi
 
     // (rank - 2, file - 1)
     if rank >= 2 && file >= 1 {
-        if is_king_safe(bitboards, position, (position >> 2 * 8 >> 1),side) {
-            l_shape_attackings |= (position >> 2 * 8 >> 1);
+        if is_king_safe(bitboards, position, (position >> (2 * 8) >> 1),side) {
+            l_shape_attackings |= (position >> (2 * 8) >> 1);
         }
     }
     let my_side=bitboards[side][Piece::A as usize];
+    let moves=display_bitboard(l_shape_attackings);
     return l_shape_attackings&(l_shape_attackings^my_side) ;
 }
 //============================================Now for the pawn movement moves===========================================================================
@@ -454,11 +458,29 @@ pub fn one_square_move(mut bitboards: [[u64; 7]; 2], rank: usize, file: usize) -
 // ===========================================Implementation to check the safety of king========================================================================
 pub fn is_king_safe(mut bitboards:[[u64;7];2],piece_position:u64,move_position:u64,side:usize)->bool
 {
- bitboards[side][Piece::A as usize]^=piece_position;
- bitboards[side][Piece::A as usize]|=move_position;
+    let mut piece_ind=0;
+    for i in 0..6
+    {
+        if (bitboards[side][i]&piece_position)!=0
+        {
+            piece_ind=i;
+            break;
+        }
+    }
+    bitboards[side][Piece::A as usize]^=piece_position;
+    bitboards[side][Piece::A as usize]|=move_position;
+    bitboards[side][piece_ind]^=piece_position;
+    bitboards[side][piece_ind]|=move_position;
+    
+    for i in 0..7
+    {
+        bitboards[1-side][i]&=((bitboards[1-side][i]^move_position));
+    }
+    let board=display_bitboard(bitboards[1-side][Piece::A as usize]);
  let side = if side==0 {'w'} else {'b'};
  if is_king_checked(bitboards,side) ==0
  {
+
     return true;
  }
  return false;
