@@ -117,7 +117,7 @@ pub fn piece_wise_horizontal_vertical_moves(mut bitboards:[[u64;7];2],rank:usize
     {
         
         let mut all_side = bitboards[PieceColor::W as usize][Piece::A as usize]|bitboards[PieceColor::B as usize][Piece::A as usize];
-        all_side=all_side^position;
+        all_side&=(all_side^position);
         let mut step = 0;
 
         // in right direction
@@ -273,7 +273,7 @@ pub fn piece_wise_l_squares(mut bitboards: [[u64; 7]; 2], rank: usize, file: usi
     return l_shape_attackings&(l_shape_attackings^my_side) ;
 }
 //============================================Now for the pawn movement moves===========================================================================
-pub fn pawn_moves(mut bitboards: [[u64; 7]; 2], rank: usize, file: usize) -> u64 {
+pub fn piece_wise_generation_pawn_moves(mut bitboards: [[u64; 7]; 2], rank: usize, file: usize) -> u64 {
     let position = 1 << ((rank * 8) as u64 + file as u64);
     let white_pieces = bitboards[PieceColor::W as usize][Piece::A as usize];
     let black_pieces = bitboards[PieceColor::B as usize][Piece::A as usize];
@@ -381,7 +381,7 @@ pub fn pawn_moves(mut bitboards: [[u64; 7]; 2], rank: usize, file: usize) -> u64
 
 //============================================Implementation for the king moves========================================================================
 
-pub fn one_square_move(mut bitboards: [[u64; 7]; 2], rank: usize, file: usize) -> u64 {
+pub fn safety_move_one_square_move(mut bitboards: [[u64; 7]; 2], rank: usize, file: usize) -> u64 {
     let position = 1 << ((rank * 8) as u64 + file as u64);
     let mut result: u64 = 0;
     let side= if (bitboards[PieceColor::W as usize][Piece::A as usize]&position)!=0{0}else{1};
