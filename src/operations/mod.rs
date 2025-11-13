@@ -1,4 +1,5 @@
 pub mod moves_generate_pieces;
+pub mod piece_wise_generation;
 use std::vec::Vec;
 use crate::data_structures::bitboard::PieceColor;
 use crate::data_structures::bitboard::Piece;
