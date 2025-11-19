@@ -2,6 +2,33 @@ use std::convert::From;
 
 #[derive(Debug,Clone,Copy)]
 #[repr(usize)]
+pub enum PieceValue
+{
+    P=1,
+    N=5,
+    B=6,
+    R=4,
+    Q=16,
+    K=255
+}
+impl From<usize> for PieceValue
+{
+   fn from(c:usize)->Self
+    {
+        match c
+        {
+             0=>PieceValue::P,
+             1=>PieceValue::N,
+             2=>PieceValue::B,
+             3=>PieceValue::R,
+             4=>PieceValue::K,
+             5=>PieceValue::Q,
+            _=> PieceValue::P
+        }
+    }
+}
+#[derive(Debug,Clone,Copy)]
+#[repr(usize)]
 pub enum Piece
 {
      P=0,
@@ -50,18 +77,7 @@ impl From<char> for PieceColor
     }
 }
 
-#[derive(Debug,Clone,Copy)]
-#[repr(u8)]
-pub enum PieceValue
-{
-    P=1,
-     N=4,
-     B=3,
-     R=5,
-     K=255,
-     Q=9,
-    }
-    
+
 //psqt table array ,we will separately define one for the white and one for the black
 //psqt[piece][phase][color][64]
 pub static PSQT: [[[[i16; 64]; 2]; 2]; 6] =  [

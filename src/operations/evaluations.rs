@@ -21,3 +21,17 @@ pub fn evaluate_move(bitboards:[[u64;7];2],phase:usize,piece_position:usize,move
     
     return move_square_score-piece_square_score-(piece_enemy_score);
 }
+
+pub fn count_evaluate(bitboards:[[u64;7];2],piece_type:isize)->i64
+{
+    let mut result:i64=0;
+    if piece_type<0
+    {
+     result-=PieceValue::from(((-1*piece_type)-1) as usize) as i64;
+    }
+    else
+    {
+        result+=PieceValue::from((piece_type) as usize) as usize as i64;
+    }
+    return result;
+}
