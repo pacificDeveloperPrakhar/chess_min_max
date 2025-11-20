@@ -419,6 +419,7 @@ pub static PSQT: [[[[i16; 64]; 2]; 2]; 6] =  [
         pub fullmove_number:u16,
         pub zobrist_key:u64,
         pub material:u64,
+        pub phase:usize,
         pub psqt:[i16;7],
         pub next_move:u8,
     }
@@ -434,7 +435,8 @@ pub static PSQT: [[[[i16; 64]; 2]; 2]; 6] =  [
             en_passant: None,       // No en-passant possible at the start
             fullmove_number: 1,     // tell sthat the current cycle is 1
             zobrist_key: 0,         // You should compute this after placing pieces
-            material:0,      // the differnece between count of each movements
+            material:0,
+            phase:618,      // the differnece between count of each movements
             psqt: [0; 7],           // Filled after piece placement
             next_move: 0,           // For staged move generation (initial stage)
         };
@@ -453,4 +455,18 @@ pub static PSQT: [[[[i16; 64]; 2]; 2]; 6] =  [
         }
                
     }
+
+    pub fn update_phase(&mut self,mut piece_type:isize)
+    {
+     if piece_type<0
+     {
+         self.phase-=(PieceValue::from((-1*(piece_type+1)) as usize) as usize);
+     }
+     else if piece_type>=0
+     {
+        self.phase+=(PieceValue::from(piece_type as usize) as usize);
+     }
+    }
 }
+
+pub const total_phase:usize=618;

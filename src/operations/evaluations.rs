@@ -35,3 +35,4 @@ pub fn count_evaluate(bitboards:[[u64;7];2],piece_type:isize)->i64
     }
     return result;
 }
+
