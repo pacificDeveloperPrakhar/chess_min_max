@@ -155,7 +155,7 @@ impl PSQT {
          {
             for col in 0..8
             {                
-                result[1][piece][row][col]=-1*result[0][piece][row][col];
+                result[1][piece][row][col]=-1*result[1][piece][row][col];
             }
             
          }
