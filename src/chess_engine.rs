@@ -2,10 +2,12 @@
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct GenMoveReq {
     #[prost(uint64, repeated, tag = "1")]
-    pub bitboard: ::prost::alloc::vec::Vec<u64>,
-    #[prost(uint32, tag = "2")]
-    pub file: u32,
+    pub white_bitboard: ::prost::alloc::vec::Vec<u64>,
+    #[prost(uint64, repeated, tag = "2")]
+    pub black_bitboard: ::prost::alloc::vec::Vec<u64>,
     #[prost(uint32, tag = "3")]
+    pub file: u32,
+    #[prost(uint32, tag = "4")]
     pub rank: u32,
 }
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
