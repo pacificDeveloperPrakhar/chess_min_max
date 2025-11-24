@@ -89,8 +89,10 @@ impl idl::chess_service_server::ChessService for EngineServer {
     async fn generate_moves(&self,request:tonic::Request<idl::GenMoveReq>)->Result<tonic::Response<idl::Bitboard>,tonic::Status>
     {
      let req:idl::GenMoveReq=request.into_inner();
-     let white_boards=req.white_bitboard;
-     let black_boards=req.black_bitboard;
+     let white_boards=req.white_bitboard.clone();
+     let black_boards=req.black_bitboard.clone();
+
+     println!("{:?}",&req);
      let mut bitboards=[[0u64;7];2];
      {
         let mut j=0;
