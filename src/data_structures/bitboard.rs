@@ -27,6 +27,8 @@ impl From<usize> for PieceValue
         }
     }
 }
+
+
 #[derive(Debug,Clone,Copy)]
 #[repr(usize)]
 pub enum Piece
@@ -64,6 +66,28 @@ impl From<char> for Piece{
     }
 }
 } 
+
+impl Piece {
+    pub fn as_char(piece:usize, side: usize) -> char {
+        let c = match piece {
+            0 => 'p',
+            1 => 'n',
+            2 => 'b',
+            3 => 'r',
+            4 => 'k',
+            5 => 'q',
+            _=>'p'
+        };
+
+        if side == 1 {
+            c.to_ascii_uppercase()
+        } else {
+            c
+        }
+    }
+}
+
+
 impl From<char> for PieceColor
 {
     fn from(c:char)->Self
@@ -409,9 +433,9 @@ pub static PSQT: [[[[i16; 64]; 2]; 2]; 6] =  [
 ];
 
 
-
+    #[derive(Debug)]
     pub struct State
-    {
+    {   
         pub active_color:u8,
         pub castling:u8,
         pub halfmove_clock:u8,
@@ -421,26 +445,33 @@ pub static PSQT: [[[[i16; 64]; 2]; 2]; 6] =  [
         pub material:u64,
         pub phase:usize,
         pub evaluation:isize,
+        pub children:Vec<Box<State>>,
+        pub next_state:Option<Box<State>>,
         pub is_checked:bool,
+        pub bitboards:[[u64;7];2],
         pub next_move:u8,
     }
     
     impl State
     {
-        pub fn init()->Self
+        pub fn init(bitboards:[[u64;7];2])->Self
         {
         let mut state = State {
-            active_color: 0,        // White to move
+            active_color: 1,        // Black to move,the reason we have set it to black because the current decison about which
+                                    // player will play will be decided by the previous active color
             castling: 0b1111,       // 15: KQkq all castling rights available
             halfmove_clock: 0,      // No moves played yet
             en_passant: None,       // No en-passant possible at the start
-            fullmove_number: 1,     // tell sthat the current cycle is 1
+            fullmove_number: 0,     // tell sthat the current cycle is 0 this will be incremented to 1 once the state
+                                    //has been allocated to the heap
             zobrist_key: 0,         // You should compute this after placing pieces
             material:0,
             phase:618,             // the differnece between count of each movements      
             next_move: 0,
             is_checked:false,
-            
+            bitboards:bitboards,
+            children:Vec::new(),
+            next_state:Option::None,
             evaluation:0
         };
         return state;

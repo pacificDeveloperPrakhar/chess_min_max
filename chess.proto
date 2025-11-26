@@ -7,16 +7,14 @@ import "google/protobuf/empty.proto";
 
 service ChessService
 {
-rpc LoadBoard(LoadBoardReq) returns(ResponseStatus){};
-rpc GenerateMoves(GenMoveReq) returns( Bitboard){};
-rpc GetBoards(google.protobuf.Empty) returns(Bitboard){};
-rpc MakeMove(MakeMoveReq) returns(Bitboards){};
+rpc LoadBoard(LoadBoardReq) returns(ffnboard){};
+rpc GenerateMoves(GenMoveReq) returns( ffnboard){};
+rpc GetBoards(google.protobuf.Empty) returns(ffnboard){};
+rpc MakeMove(MakeMoveReq) returns(ffnboard){};
 }
     
 message GenMoveReq
 {
- repeated uint64 white_bitboard=1;
- repeated uint64 black_bitboard=2;
  uint32 file=3;
  uint32 rank=4;
 }
@@ -25,18 +23,11 @@ message LoadBoardReq
 {
  string board=1;
 }
-
-message Bitboard
-{
- uint64 board=1;
-}
  
 message MakeMoveReq
 {
  uint32 piece=1;
  uint32 piece_color=2;
- repeated uint64 white_bitboard=3;
- repeated uint64 black_bitboard=4;
  uint64 move_position=5;
  uint64 piece_position=6;
 }
@@ -47,8 +38,7 @@ message Bitboards
  repeated uint64 black_bitboard=2;
 }
 
-message ResponseStatus
+message ffnboard
 {
- bool accomplished=1;
- string mssg=2;
+ string board=1;
 }
