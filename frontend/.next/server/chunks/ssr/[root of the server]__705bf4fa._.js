@@ -123,109 +123,10 @@ const mod = __turbopack_context__.x("tls", () => require("tls"));
 
 module.exports = mod;
 }}),
-"[externals]/process [external] (process, cjs)": (function(__turbopack_context__) {
+"[project]/src/app/grpc_config.tsx [app-rsc] (ecmascript)": (function(__turbopack_context__) {
 
 var { g: global, __dirname, m: module, e: exports } = __turbopack_context__;
 {
-const mod = __turbopack_context__.x("process", () => require("process"));
-
-module.exports = mod;
-}}),
-"[externals]/os [external] (os, cjs)": (function(__turbopack_context__) {
-
-var { g: global, __dirname, m: module, e: exports } = __turbopack_context__;
-{
-const mod = __turbopack_context__.x("os", () => require("os"));
-
-module.exports = mod;
-}}),
-"[externals]/http2 [external] (http2, cjs)": (function(__turbopack_context__) {
-
-var { g: global, __dirname, m: module, e: exports } = __turbopack_context__;
-{
-const mod = __turbopack_context__.x("http2", () => require("http2"));
-
-module.exports = mod;
-}}),
-"[externals]/dns [external] (dns, cjs)": (function(__turbopack_context__) {
-
-var { g: global, __dirname, m: module, e: exports } = __turbopack_context__;
-{
-const mod = __turbopack_context__.x("dns", () => require("dns"));
-
-module.exports = mod;
-}}),
-"[project]/src/app/grpc_config.tsx [app-rsc] (ecmascript)": ((__turbopack_context__) => {
-"use strict";
-
-var { g: global, __dirname } = __turbopack_context__;
-{
-__turbopack_context__.s({});
-var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$grpc$2f$grpc$2d$js$2f$build$2f$src$2f$index$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/@grpc/grpc-js/build/src/index.js [app-rsc] (ecmascript)");
-var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$grpc$2f$proto$2d$loader$2f$build$2f$src$2f$index$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/@grpc/proto-loader/build/src/index.js [app-rsc] (ecmascript)");
-;
-;
-// 1️⃣ Path to proto
-const PROTO_PATH = "/home/prakhar/Desktop/prakhar/chess_min_max/chess.proto";
-// 2️⃣ Load proto
-const packageDefinition = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$grpc$2f$proto$2d$loader$2f$build$2f$src$2f$index$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["loadSync"])(PROTO_PATH, {
-    keepCase: true,
-    longs: String,
-    enums: String,
-    defaults: true,
-    oneofs: true
-});
-const proto = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$grpc$2f$grpc$2d$js$2f$build$2f$src$2f$index$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["loadPackageDefinition"])(packageDefinition).chess_engine;
-// 3️⃣ Create client
-const client = new proto.ChessService("localhost:50051", __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$grpc$2f$grpc$2d$js$2f$build$2f$src$2f$index$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["credentials"].createInsecure());
-// -----------------------------
-// Unary RPC Calls
-// 1. LoadBoard
-function loadBoard() {
-    const req = {
-        board: "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR"
-    };
-    client.LoadBoard(req, (err, res)=>{
-        if (err) console.error("LoadBoard error:", err);
-        else console.log("LoadBoard result:", res.board);
-    });
-}
-// 2. GenerateMoves
-function generateMoves() {
-    const req = {
-        file: 4,
-        rank: 3
-    };
-    client.GenerateMoves(req, (err, res)=>{
-        if (err) console.error("GenerateMoves error:", err);
-        else console.log("GenerateMoves result:", res.board);
-    });
-}
-// 3. GetBoards
-function getBoards() {
-    client.GetBoards({}, (err, res)=>{
-        if (err) console.error("GetBoards error:", err);
-        else console.log("GetBoards result:", res.board);
-    });
-}
-// 4. MakeMove
-function makeMove() {
-    const req = {
-        piece: 1,
-        piece_color: 0,
-        move_position: "1024",
-        piece_position: "512"
-    };
-    client.MakeMove(req, (err, res)=>{
-        if (err) console.error("MakeMove error:", err);
-        else console.log("MakeMove result:", res.board);
-    });
-}
-// -----------------------------
-// Run Example
-loadBoard(); // generateMoves();
- // getBoards();
- // makeMove();
 }}),
 "[project]/src/app/page.tsx [app-rsc] (ecmascript)": ((__turbopack_context__) => {
 "use strict";
@@ -270,4 +171,4 @@ __turbopack_context__.n(__turbopack_context__.i("[project]/src/app/page.tsx [app
 
 };
 
-//# sourceMappingURL=%5Broot%20of%20the%20server%5D__390d7c89._.js.map
+//# sourceMappingURL=%5Broot%20of%20the%20server%5D__705bf4fa._.js.map
